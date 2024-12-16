@@ -940,6 +940,9 @@ func (mw *MagickWand) GetImageBackgroundColor() (bgColor *PixelWand, err error) 
 func (mw *MagickWand) GetImageBlob() ([]byte, error) {
 	clen := C.size_t(0)
 	csblob := C.MagickGetImageBlob(mw.mw, &clen)
+	if err := mw.GetLastError(); csblob == nil && err != nil {
+		return nil, err
+	}
 	defer relinquishMemory(unsafe.Pointer(csblob))
 	ret := C.GoBytes(unsafe.Pointer(csblob), C.int(clen))
 	runtime.KeepAlive(mw)
@@ -958,6 +961,9 @@ func (mw *MagickWand) GetImageBlob() ([]byte, error) {
 func (mw *MagickWand) GetImagesBlob() ([]byte, error) {
 	clen := C.size_t(0)
 	csblob := C.MagickGetImagesBlob(mw.mw, &clen)
+	if err := mw.GetLastError(); csblob == nil && err != nil {
+		return nil, err
+	}
 	defer relinquishMemory(unsafe.Pointer(csblob))
 	ret := C.GoBytes(unsafe.Pointer(csblob), C.int(clen))
 	runtime.KeepAlive(mw)
